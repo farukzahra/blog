@@ -5,7 +5,12 @@ description: Post a published blog article to LinkedIn after user approval. Veri
 
 # LinkedIn Push
 
-Post an English article from this blog to the author's LinkedIn profile.
+Post a published blog article to the author's LinkedIn profile.
+
+## Language
+
+- **Post body:** Portuguese (LinkedIn has built-in translation for readers)
+- **Hashtags:** English (PascalCase) — never translate hashtags
 
 ## Preconditions
 
@@ -33,9 +38,9 @@ Post an English article from this blog to the author's LinkedIn profile.
 
 See `.cursor/rules/publish-article-linkedin.mdc`:
 
-- English, conversational, ~10 lines
+- Portuguese body, conversational, ~10 lines
 - Hook → context → 3–4 technical points → takeaway
-- At least 10 hashtags (article tags + pool), **before** the URL
+- At least 10 hashtags in **English** (article tags + pool), **before** the URL
 - URL always last
 - No emoji spam
 

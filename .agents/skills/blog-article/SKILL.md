@@ -91,11 +91,10 @@ Follow `.cursor/rules/publish-article-linkedin.mdc`:
 
 Before asking for approval, always deliver to the user:
 
-1. **Localhost preview URLs** (validate HTTP 200 yourself):
+1. **Localhost preview URLs** — dev server running (`npm run dev` if needed); **HTTP 200 on the exact path** before sharing:
    - EN: `http://localhost:4321/articles/<category>/<slug>/`
    - pt-BR: `http://localhost:4321/articles/<category>/<slug>-pt-br/` (lowercase)
-   - Dev server: `npm run dev` if not running
-2. **LinkedIn preview** — run dry-run (works on `draft: true`):
+2. **LinkedIn preview** — Portuguese body, English hashtags; run dry-run (works on `draft: true`):
    ```bash
    node scripts/linkedin-post.mjs --slug <category/slug> --dry-run
    ```

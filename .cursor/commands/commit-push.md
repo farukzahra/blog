@@ -81,7 +81,7 @@ Skip Step 6 when:
 - Deploy/CI failed or prod 404
 - User said skip LinkedIn
 
-Copy rules: `.cursor/rules/publish-article-linkedin.mdc`
+Copy rules: `.cursor/rules/publish-article-linkedin.mdc` — **body in Portuguese**, hashtags in English.
 
 ## Failures
 

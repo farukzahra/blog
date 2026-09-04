@@ -33,7 +33,7 @@ A  blog  66.23.231.218
 ## Primeiro deploy manual
 
 ```bash
-ssh -i C:/repo/financeiro/planos/vps-secrets/deploy_key root@66.23.231.218
+ssh -i C:/repo/secrets/vps/ssh/github-actions-vps-shared root@66.23.231.218
 
 mkdir -p /opt/blog
 git clone https://github.com/farukzahra/blog.git /opt/blog

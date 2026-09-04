@@ -12,7 +12,7 @@ When finishing a **new or updated public article** (`draft: false`):
 2. **Commit/push** — only if the user asked (or `/commit-push`).
 3. **Wait for deploy** — push to `main` triggers VPS deploy; verify prod:
    - `GET https://blog.faruk.dev.br/articles/{slug}/` → 200
-4. **LinkedIn post** — English, short, human tone; URL at the end; article link card attached.
+4. **LinkedIn post** — Portuguese (body text); short, human tone; URL at the end; article link card attached.
 
 ## After `/commit-push` (mandatory when article shipped)
 
@@ -38,7 +38,9 @@ node scripts/linkedin-post.mjs --slug <category/article-slug> --text "custom cop
 - **~10 lines** of body text (hook, context, 3–4 technical points, takeaway)
 - **At least 10 hashtags** (from article tags + pool), placed before the URL
 - **URL always last**
-- English, conversational — no emoji spam, no "In today's fast-paced world"
+- **Body in Portuguese** — conversational; LinkedIn has built-in translation for readers
+- **Hashtags in English** (PascalCase, from article tags + pool) — keep as-is, do not translate
+- No emoji spam, no "In today's fast-paced world"
 - Use `scripts/lib/linkedin-copy.mjs` or craft manually with `--text "..."`
 - **Show preview with `--dry-run` and wait for user approval before posting**
 - Skip if `draft: true`

@@ -164,8 +164,8 @@ Resumo:
 | Path VPS | `/opt/blog` |
 | Porta | `8085` |
 | Domínio | `blog.faruk.dev.br` |
-| SSH key | `C:\repo\financeiro\planos\vps-secrets\deploy_key` |
-| PAT | `C:\repo\financeiro\planos\vps-secrets\github-pat.txt` |
+| SSH key | `C:\repo\secrets\vps\ssh\github-actions-vps-shared` |
+| PAT | `C:\repo\secrets\github\pat.txt` |
 
 ## Estrutura alvo
 

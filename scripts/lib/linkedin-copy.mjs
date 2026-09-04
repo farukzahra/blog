@@ -4,10 +4,6 @@ function hashString(str) {
   return Math.abs(h);
 }
 
-function pick(list, seed) {
-  return list[seed % list.length];
-}
-
 /** Sanitize tag label → LinkedIn hashtag (no spaces). */
 function toHashtag(label) {
   const cleaned = label.replace(/[^a-zA-Z0-9\s-]/g, '').trim();
@@ -42,20 +38,9 @@ const DEFAULT_HASHTAG_POOL = [
 
 const MIN_HASHTAGS = 10;
 
-const HOOKS = [
-  'Before a renewal call, sales reps still juggle CRM tabs, ticket queues, and PDF contracts.',
-  'Enterprise agents fail when everything is stuffed into one prompt — or when every flow is hard-coded.',
-  'Most "AI sales assistants" are either generic chatbots or brittle if-this-then-that scripts.',
-];
-
-const TAKEAWAYS = [
-  'The pattern scales: add a REST API, expose it as an MCP tool, let the agent decide when to call it.',
-  'Worth stealing if you need FACT vs recommendation separation and a provenance panel in the UI.',
-  'Local Docker stack first, Azure OpenAI + AI Search when you are ready — same agent code.',
-];
-
 /**
  * Build at least MIN_HASHTAGS unique hashtags (article tags first, then pool).
+ * Hashtags stay in English regardless of post body language.
  * @param {string[]} articleTags
  * @param {number} seed
  * @param {string} [title]
@@ -96,33 +81,22 @@ export function buildHashtags(articleTags, seed, title = '') {
 }
 
 /**
- * Generate a ~10-line LinkedIn post in English (human tone, URL at the end).
- * Always includes at least 10 hashtags before the URL.
- * @param {{ title: string; description: string; tags?: string[]; url: string; intro?: string }} article
+ * Generate a ~10-line LinkedIn post in Portuguese (human tone, URL at the end).
+ * Hashtags remain in English. Always includes at least 10 hashtags before the URL.
+ * @param {{ title: string; description: string; tags?: string[]; url: string }} article
  */
 export function generateLinkedInCopy(article) {
   const seed = hashString(article.url);
-  const hook = pick(HOOKS, seed);
-  const takeaway = pick(TAKEAWAYS, seed >> 2);
   const desc = article.description.replace(/\.$/, '');
   const tags = article.tags ?? [];
-  const stack =
-    tags.length > 0
-      ? tags.slice(0, 5).join(' · ')
-      : 'Semantic Kernel · MCP · RAG · FastAPI';
-
   const hashtags = buildHashtags(tags, seed, article.title).join(' ');
 
   const lines = [
-    hook,
+    desc,
     '',
-    `I wrote about how we wired that up: ${desc}.`,
+    `Escrevi sobre isso no blog — vale a leitura se o tema te interessa.`,
     '',
-    `Stack: ${stack}.`,
-    'MCP handles transactional data (CRM, sales, tickets). RAG handles policies and contracts.',
-    'Semantic Kernel picks the tools per question — no manual routing table in Python.',
-    'The MCP server only forwards to REST; business rules stay in the existing APIs.',
-    takeaway,
+    `Tópicos: ${tags.slice(0, 5).join(' · ') || 'engenharia de software'}.`,
     '',
     hashtags,
     '',
