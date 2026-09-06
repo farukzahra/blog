@@ -1,16 +1,16 @@
 {
   "version": 1,
   "skills": {
+    "article-from-repo": {
+      "source": "./local/blog",
+      "sourceType": "local",
+      "skillPath": ".agents/skills/article-from-repo/SKILL.md"
+    },
     "ask-questions": {
       "source": "ferueda/agent-skills",
       "sourceType": "github",
       "skillPath": "skills/ask-questions/SKILL.md",
       "computedHash": "f129f942ab3b16ee6b333a8e8bc163f7da76040da416514583f16895198c7e4f"
-    },
-    "article-from-repo": {
-      "source": "local/blog",
-      "sourceType": "local",
-      "skillPath": ".agents/skills/article-from-repo/SKILL.md"
     },
     "audit": {
       "source": "ferueda/agent-skills",
@@ -19,14 +19,9 @@
       "computedHash": "5744e03f2db1c39b1a58e4f6866b33172c694fb17284eeae517e50760cb2e785"
     },
     "blog-article": {
-      "source": "local/blog",
+      "source": "./local/blog",
       "sourceType": "local",
       "skillPath": ".agents/skills/blog-article/SKILL.md"
-    },
-    "codebase-summary": {
-      "source": "local/blog",
-      "sourceType": "local",
-      "skillPath": ".agents/skills/codebase-summary/SKILL.md"
     },
     "brainstorming": {
       "source": "obra/superpowers",
@@ -40,15 +35,21 @@
       "computedHash": "9192b5d6be529478a70d1a73f3d4ce83db12c2052c4e6df4accd445f21e906d4"
     },
     "caveman-commit": {
-      "source": "juliusbrussee/caveman",
+      "source": "farukzahra/agent-skills",
       "sourceType": "github",
-      "skillPath": "skills/caveman-commit/SKILL.md"
+      "skillPath": "skills/caveman-commit/SKILL.md",
+      "computedHash": "f028652defd5fdeddcce2994083cb1a7b201ee827bba8e2495546ee159fca3de"
     },
     "code-quality-review": {
       "source": "ferueda/agent-skills",
       "sourceType": "github",
       "skillPath": "skills/code-quality-review/SKILL.md",
       "computedHash": "d279f5744cb9917a38094621320ae83c5a6b6038888c860f9f3a1a6dcf5bb18b"
+    },
+    "codebase-summary": {
+      "source": "./local/blog",
+      "sourceType": "local",
+      "skillPath": ".agents/skills/codebase-summary/SKILL.md"
     },
     "content-research-writer": {
       "source": "composiohq/awesome-claude-skills",
@@ -75,7 +76,7 @@
       "computedHash": "7943d53e4907638c6419e72693ce194b6f2f055523b7203de6afd773973d1350"
     },
     "fact-checker": {
-      "source": "local/blog",
+      "source": "./local/blog",
       "sourceType": "local",
       "skillPath": ".agents/skills/fact-checker/SKILL.md"
     },
@@ -123,22 +124,28 @@
       "skillPath": "skills/react-to-review/SKILL.md",
       "computedHash": "bb01bbc784d9c62ba820565aed3d0a2bbb9f1eaa8bf7b963aac647421cee1a1a"
     },
+    "research-codebase": {
+      "source": "./local/blog",
+      "sourceType": "local",
+      "skillPath": ".agents/skills/research-codebase/SKILL.md"
+    },
     "review-implementation": {
       "source": "ferueda/agent-skills",
       "sourceType": "github",
       "skillPath": "skills/review-implementation/SKILL.md",
       "computedHash": "26dfd2f338fdb6e34b5964ae663744503301571dcc4a9c107ea6e55ad34008c9"
     },
-    "research-codebase": {
-      "source": "local/blog",
-      "sourceType": "local",
-      "skillPath": ".agents/skills/research-codebase/SKILL.md"
-    },
     "review-spec": {
       "source": "ferueda/agent-skills",
       "sourceType": "github",
       "skillPath": "skills/review-spec/SKILL.md",
       "computedHash": "37e4bf9db7d5fc8147d275873448d74d33a66c7d0b174d4cec43b21a559dee13"
+    },
+    "semantic-version": {
+      "source": "farukzahra/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/semantic-version/SKILL.md",
+      "computedHash": "0d736dc574837851509a5c8438bd5441f251632b0101af45c437e2d0cc6a97f5"
     },
     "systematic-debugging": {
       "source": "obra/superpowers",
