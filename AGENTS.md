@@ -153,6 +153,27 @@ npm run build
 npm run preview   # http://localhost:4321 ou porta indicada
 ```
 
+## Mermaid (diagramas em artigos)
+
+Blog usa **Mermaid 11.16** no cliente (`src/components/MermaidInit.astro`). Diagrama com syntax error aparece como *"Syntax error in text"* na página — tratar como bug.
+
+**Antes de entregar** qualquer ` ```mermaid ` novo ou alterado em MDX:
+
+1. **Compilar** com o mesmo major do blog:
+   ```bash
+   npm run verify:mermaid -- path/to/diagram.mmd
+   # ou: echo 'flowchart LR; A-->B' | npm run verify:mermaid -- --stdin
+   ```
+2. **Validar na página** — dev server + artigo no browser; confirmar SVG renderizado (sem caixa de erro).
+3. **Incluir no `npm run build`** quando o artigo for publicado (`draft: false`).
+
+**Regras de sintaxe (evitar falhas silenciosas no browser):**
+
+* Diagramas em **inglês ASCII** nos dois idiomas do artigo (mesma regra dos code blocks).
+* Evitar em labels de nó: `+`, extensões com ponto (`AGENTS.md` → `AGENTS doc pointer`), acentos.
+* Preferir `A[Label text]` a aspas quando o label é simples; aspas só se necessário.
+* Skills que geram Mermaid (`c4-architecture`, `blog-article`) devem rodar `verify:mermaid` antes de concluir.
+
 ## Deploy VPS
 
 Ver [`plan.md`](plan.md) § VPS e [`secrets.local.md`](secrets.local.md).

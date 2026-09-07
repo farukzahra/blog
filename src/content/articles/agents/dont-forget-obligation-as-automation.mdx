@@ -1,11 +1,11 @@
 ---
-title: I Made a dont-forget Skill Because Agents Keep Promising They'll Remember
+title: dont-forget — The Agent Picks the Enforcement, You Approve Before It Ships
 description: >-
-  Always increment the deploy counter — three deploys later, still zero.
-  dont-forget turns recurring obligations into CI, hooks, and failing builds
-  instead of prose rules agents skip.
+  I keep asking agents to remember more things. Promises in chat do not survive
+  the next session. dont-forget makes the agent propose executable enforcement
+  and wait for your OK before touching the repo.
 publishDate: 2026-09-06
-updatedDate: 2026-09-06
+updatedDate: 2026-09-07
 author: Faruk
 tags:
   - AI Engineering
@@ -22,92 +22,56 @@ lang: en
 translationId: agents/dont-forget-obligation-as-automation
 ---
 
-"Always increment the deploy counter." I said it three times across three sessions. Three deploys later, the counter was still at zero.
+I asked the agent to increment the deploy counter on every production deploy. It agreed. It even added a user rule. Next session, `deploy-count.json` was still at zero.
 
-The agent had agreed every time. It even added a user rule: *remember to bump deploy-count.json on each deploy.* Then a new chat started, context reset, and the counter stayed frozen.
+That was not the first time. I am asking agents to remember more and more — DER updates, E2E before "done", OpenAPI client sync — and the pattern is always the same: **yes in chat, nothing in the repo**.
 
-That's not malice — it's how agents work. Written rules and chat promises are **soft**. They compete with the current task, get skipped under pressure, and vanish when the session ends.
+I am not trying to fix agent memory. I am trying to stop relying on it.
 
-I didn't want another reminder. I wanted machinery the next agent **cannot bypass without breaking the build**.
+## What I actually want
 
-## What dont-forget does
+When I say *always*, *every deploy*, *never forget*, I do not want another paragraph in `AGENTS.md`. I want the agent to look at the obligation, pick a **trigger** (commit, deploy, PR, schedule), decide what **executable gate** fits this codebase — workflow step, hook, test that fails, codegen diff — and **show me the plan before editing anything**.
 
-`dont-forget` is a Cursor skill that triggers when you say things like *always*, *every time*, *never forget*, *on each deploy*, or *before every commit*. Instead of writing a longer AGENTS.md paragraph, the skill walks the agent through encoding the obligation as **executable automation**.
+I approve (or adjust). Then it implements. One line in `AGENTS.md` points at the automation. Future sessions discover it from files, not from chat history.
 
-The core idea: pick the highest enforcement tier that fits, implement the smallest hard gate, wire it to a concrete trigger, and document one line pointing at the automation — not a paragraph asking future agents to remember.
+That is the heart of [`dont-forget`](https://www.skills.sh/farukzahra/agent-skills/dont-forget): not "remember better," but **propose enforcement, get approval, commit machinery**.
 
 ```mermaid
-flowchart TB
-  A["User: never forget X again"] --> B["Name the obligation"]
-  B --> C["Find the trigger\n(deploy, commit, PR, schedule)"]
-  C --> D["Pick enforcement tier"]
-  D --> E["Implement hard gate\n(exit 1, CI fail, codegen)"]
-  E --> F["Wire trigger + verify"]
-  F --> G["One-line doc in README/AGENTS.md"]
+flowchart LR
+  A[Obligation] --> B[Trigger]
+  B --> C[Pick mechanism]
+  C --> D[Propose to user]
+  D --> E[User approves]
+  E --> F[Implement and verify]
+  F --> G[AGENTS doc pointer]
 ```
 
-## The enforcement ladder
+This is not "AI safety guardrails" (blocking bad outputs). It is **enforcement** — software that checks whether something important actually happened.
 
-The skill ranks mechanisms by how well they survive a new chat:
+## Deploy counter — how the proposal should look
 
-| Tier | Mechanism | Survives new chat? | Example |
-|------|-----------|-------------------|---------|
-| 1 | CI / deploy pipeline | Yes | Bump deploy counter in GitHub Actions |
-| 2 | Git hooks | Yes | Block commit if DER not updated |
-| 3 | Build / test failure | Yes | `make der-check` in CI |
-| 4 | Lint / type rules | Yes | Custom ESLint or Ruff check |
-| 5 | Codegen / scaffolder | Yes | OpenAPI → client generation |
-| 6 | Scheduled job | Yes | Nightly inventory sync |
-| 7 | Cursor hook / project rule | Partial | Validator on `afterFileEdit` |
-| 8 | Makefile / npm script chain | Partial | `npm run deploy` runs all steps |
-| 9 | Prose rule (AGENTS.md) | Weak | Last resort — points at tiers 1–8 |
+Same request: increment counter every deploy, agent forgot before.
 
-Pick the **highest tier that fits**. A prose rule should only **point at** the automation, not replace it.
+**Wrong:** user rule *"remember to bump deploy-count.json."*
 
-## Real patterns from my repos
+**Right:** before any file edit, something like:
 
-### Deploy counter (the one that started this)
+> **Obligation:** `deploy-count.json` increments on every successful production deploy.  
+> **Trigger:** `.github/workflows/deploy.yml`, after health check passes.  
+> **Mechanism:** workflow step runs `scripts/increment-deploy-count.sh`.  
+> **Files:** workflow, script, counter file.  
+> **If skipped:** deploy job fails (prefer this over a silent stale counter).  
+> **AGENTS.md:** `Deploy count: see .github/workflows/deploy.yml`  
+>  
+> Approve to implement?
 
-**Bad:** User rule saying "remember to increment deploy count."
+After approval: add the step, run it once, confirm failure when skipped. Done. No "I'll remember next time."
 
-**Good:**
+The skill includes an **enforcement ladder** (CI and deploy pipelines beat prose rules) so the agent has a ranked menu — but the choice is contextual. A hook might beat CI for pre-commit checks; codegen might beat both for OpenAPI drift. The agent decides; I confirm.
 
-1. `scripts/increment-deploy-count.sh` (or inline in workflow)
-2. Step in `.github/workflows/deploy.yml` after health check passes
-3. Commit `deploy-count.json`
-4. README: *Deploy count auto-increments in deploy workflow.*
+## When it does not apply
 
-Skip the step → deploy still works, but the counter doesn't move and you notice immediately. Better: make the step fail the job if the file can't be written.
-
-### Schema ↔ DER sync (nfe_bot)
-
-Change `database/schema.sql` without updating `database/der.md`? pre-commit blocks it. CI runs `make der-check`. The agent doesn't need to "remember" the DER — the commit either passes or it doesn't.
-
-### E2E before claiming UI done
-
-A Cursor rule saying "run Playwright" is tier 9 — agents skip it. Required `test:e2e` job on PR is tier 3. Husky `prepush` is tier 8. Both beat "I'll run tests before finishing."
-
-### OpenAPI client drift
-
-`npm run generate:api && git diff --exit-code` in CI. Backend route changes without regenerating the client → red build. No chat history required.
-
-## When NOT to use it
-
-The skill has guardrails. Don't automate everything:
-
-- One-off tasks in the current session only
-- Judgment-heavy work with no objective pass/fail (copy tone, architecture tradeoffs)
-- Automation cost exceeds value (a 5-minute yearly task)
-- User explicitly wants a manual checklist
-
-## Anti-patterns the skill rejects
-
-| Bad | Better |
-|-----|--------|
-| "I'll increment the counter next deploy" | Step in `deploy.yml` increments `deploy-count.txt` |
-| Long AGENTS.md section repeating the same reminder | `pre-commit` + one-line pointer |
-| Optional npm script nobody runs | `deploy` script calls it; CI runs `deploy --dry-run` |
-| Comment `// TODO: don't forget X` | Test or lint that fails until X exists |
+One-off work in this session. Judgment calls with no objective pass/fail. Tasks where automation costs more than a once-a-year manual step. When I explicitly want a manual checklist only.
 
 ## Install
 
@@ -115,25 +79,12 @@ The skill has guardrails. Don't automate everything:
 npx skills add farukzahra/agent-skills --skill dont-forget
 ```
 
-Global install (all projects under `C:\repo`):
+Global (all projects):
 
 ```bash
 npx skills add farukzahra/agent-skills --skill dont-forget -g -a cursor -y
 ```
 
-Listing: [skills.sh/farukzahra/agent-skills/dont-forget](https://www.skills.sh/farukzahra/agent-skills/dont-forget)
+Source: [github.com/farukzahra/agent-skills](https://github.com/farukzahra/agent-skills) — `skills/dont-forget/`.
 
-Source: [github.com/farukzahra/agent-skills](https://github.com/farukzahra/agent-skills) — skill lives in `skills/dont-forget/`.
-
-## What the agent reports back
-
-After implementing, the skill requires the agent to state:
-
-1. **What** is enforced
-2. **Where** (file + trigger)
-3. **What fails** if skipped
-4. That future sessions do **not** rely on memory
-
-No more "I'll remember." Either the build passes or it doesn't.
-
-If you've told an agent the same thing twice and it still didn't stick — stop writing reminders. Write a gate.
+If you have repeated the same instruction twice and nothing stuck — do not write another reminder. Ask the agent what to enforce, read the proposal, and let the repo remember for you.

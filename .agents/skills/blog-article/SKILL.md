@@ -53,7 +53,7 @@ translationId: agents/my-post   # same id on both versions
 - **User quotes:** If the author wrote in Portuguese (chat with the LLM), **translate to English** in the article. Fix spelling/grammar in the translation (e.g. *denovo* → *again*, *nao* → *don't*). Keep original repo artifact names (README headings, ADRs) only when citing files—add English gloss in parentheses if helpful.
 - **Tone:** Direct, developer-to-developer — see `technical-writing` skill
 - **Structure:** Hook → what you build → architecture → implementation → lessons
-- **Diagrams:** Mermaid fenced blocks (blog renders them)
+- **Diagrams:** Mermaid fenced blocks (blog renders them). **Before delivery:** compile every new or changed diagram with `npm run verify:mermaid -- <file.mmd>` (or `--stdin`); open the article on localhost and confirm the SVG renders (no "Syntax error in text"). Use English ASCII labels in both EN and pt-BR articles; avoid `+`, file extensions in node labels (e.g. `AGENTS.md`), and accented characters inside Mermaid blocks.
 - **Code:** Real snippets from source repo; cite paths in prose
 - **No fluff:** Skip "In today's fast-paced world", generic pros/cons lists
 

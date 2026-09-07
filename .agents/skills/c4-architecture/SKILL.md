@@ -12,7 +12,8 @@ Generate software architecture documentation using C4 model diagrams in Mermaid 
 1. **Understand scope** - Determine which C4 level(s) are needed based on audience
 2. **Analyze codebase** - Explore the system to identify components, containers, and relationships
 3. **Generate diagrams** - Create Mermaid C4 diagrams at appropriate abstraction levels
-4. **Document** - Write diagrams to markdown files with explanatory context
+4. **Verify syntax** - Compile each diagram before delivery: `npm run verify:mermaid -- <file.mmd>` (blog repo) or equivalent Mermaid 11 CLI; fix until it passes. Avoid `+`, dotted extensions in node labels, and non-ASCII in labels when targeting this blog.
+5. **Document** - Write diagrams to markdown files with explanatory context
 
 ## C4 Diagram Levels
 

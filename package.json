@@ -11,7 +11,8 @@
     "preview": "astro preview",
     "astro": "astro",
     "linkedin:auth": "node scripts/linkedin-oauth.mjs",
-    "linkedin:post": "node scripts/linkedin-post.mjs"
+    "linkedin:post": "node scripts/linkedin-post.mjs",
+    "verify:mermaid": "node scripts/verify-mermaid.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "^7.0.4",
