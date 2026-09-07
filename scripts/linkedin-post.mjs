@@ -9,18 +9,19 @@
 import { readFileSync, existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { loadSecrets, requireSecret, root } from './lib/secrets.mjs';
-import { refreshAccessToken, createArticleShare } from './lib/linkedin-api.mjs';
+import { refreshAccessToken, createArticleShare, updatePostCommentary } from './lib/linkedin-api.mjs';
 import { generateLinkedInCopy } from './lib/linkedin-copy.mjs';
 
 const SITE_URL = process.env.SITE_URL ?? 'https://blog.faruk.dev.br';
 
 function parseArgs(argv) {
-  const args = { slug: '', dryRun: false, skipVerify: false, text: '' };
+  const args = { slug: '', dryRun: false, skipVerify: false, text: '', updateUrn: '' };
   for (let i = 2; i < argv.length; i += 1) {
     if (argv[i] === '--slug') args.slug = argv[++i] ?? '';
     else if (argv[i] === '--dry-run') args.dryRun = true;
     else if (argv[i] === '--skip-verify') args.skipVerify = true;
     else if (argv[i] === '--text') args.text = argv[++i] ?? '';
+    else if (argv[i] === '--update-urn') args.updateUrn = argv[++i] ?? '';
   }
   if (!args.slug) throw new Error('Missing --slug (e.g. agents/my-article-slug)');
   return args;
@@ -115,6 +116,17 @@ async function main() {
   }
 
   const accessToken = await refreshAccessToken(env);
+
+  if (args.updateUrn) {
+    const { status } = await updatePostCommentary({
+      accessToken,
+      postUrn: args.updateUrn,
+      commentary,
+    });
+    console.log(`Updated (${status})`, args.updateUrn);
+    return;
+  }
+
   const { postUrn, status } = await createArticleShare({
     accessToken,
     authorUrn: requireSecret(env, 'LINKEDIN_PERSON_URN'),

@@ -90,3 +90,39 @@ export async function createArticleShare({
   const postUrn = res.headers.get('x-restli-id') ?? res.headers.get('X-RestLi-Id');
   return { postUrn, status: res.status };
 }
+
+/**
+ * Update commentary on an existing post (Posts API partial update).
+ * @param {object} opts
+ * @param {string} opts.accessToken
+ * @param {string} opts.postUrn e.g. urn:li:share:7502515350823919617
+ * @param {string} opts.commentary New post body (hashtags + URL as needed)
+ */
+export async function updatePostCommentary({ accessToken, postUrn, commentary }) {
+  const encodedUrn = encodeURIComponent(postUrn);
+  const payload = {
+    patch: {
+      $set: {
+        commentary,
+      },
+    },
+  };
+
+  const res = await fetch(`https://api.linkedin.com/rest/posts/${encodedUrn}`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      'Content-Type': 'application/json',
+      'X-Restli-Protocol-Version': '2.0.0',
+      'X-RestLi-Method': 'PARTIAL_UPDATE',
+      'LinkedIn-Version': LINKEDIN_VERSION,
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (!res.ok) {
+    throw new Error(`LinkedIn update failed (${res.status}): ${await res.text()}`);
+  }
+
+  return { postUrn, status: res.status };
+}
