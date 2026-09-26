@@ -1,0 +1,57 @@
+---
+description: After publishing a new blog article, deploy to prod and post to LinkedIn
+applyTo: "**"
+---
+
+# Publish article → LinkedIn
+
+When finishing a **new or updated public article** (`draft: false`):
+
+1. **Build locally** — `npm run build` must pass.
+2. **Commit/push** — only if the user asked (or `/commit-push`).
+3. **Wait for deploy** — push to `main` triggers VPS deploy; verify prod:
+   - `GET https://blog.faruk.dev.br/articles/{slug}/` → 200
+4. **LinkedIn post** — Portuguese (body text); short, human tone; URL at the end; article link card attached.
+
+## After `/commit-push` (mandatory when article shipped)
+
+When `/commit-push` includes a public article:
+
+1. Complete commit, push, and CI/deploy verification first.
+2. Run dry-run and **show the full preview** to the user:
+   ```bash
+   node scripts/linkedin-post.mjs --slug <category/article-slug> --dry-run
+   ```
+3. **Ask the user:** post as-is, edit with `--text`, or skip?
+4. Post **only after explicit approval** — never auto-post at end of `/commit-push`.
+
+## Post command
+
+```bash
+node scripts/linkedin-post.mjs --slug <category/article-slug>
+node scripts/linkedin-post.mjs --slug <category/article-slug> --text "custom copy..."
+```
+
+## Copy rules
+
+- **~10 lines** of body text (hook, context, 3–4 technical points, takeaway)
+- **At least 10 hashtags** (from article tags + pool), placed before the URL
+- **URL always last**
+- **Body in Portuguese** — conversational; LinkedIn has built-in translation for readers
+- **Hashtags in English** (PascalCase, from article tags + pool) — keep as-is, do not translate
+- No emoji spam, no "In today's fast-paced world"
+- Use `scripts/lib/linkedin-copy.mjs` or craft manually with `--text "..."`
+- **Show preview with `--dry-run` and wait for user approval before posting**
+- Skip if `draft: true`
+
+## Prerequisites (one-time)
+
+- `secrets.local.md`: `LINKEDIN_CLIENT_ID`, `LINKEDIN_CLIENT_SECRET`, `LINKEDIN_REFRESH_TOKEN`, `LINKEDIN_PERSON_URN`
+- App Auth redirect: `http://localhost:8787/callback`
+- OAuth: `npm run linkedin:auth`
+
+## Failures
+
+- Prod 404 → fix deploy first, do not post
+- Token expired → re-run `npm run linkedin:auth`
+- Never commit secrets or paste them in chat

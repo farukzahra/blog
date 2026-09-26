@@ -1,0 +1,27 @@
+---
+description: Ao concluir tarefas, subir servidor dev Astro e informar URL de teste
+applyTo: "**"
+---
+
+# Servidor dev ao concluir tarefa
+
+Sempre que terminar uma task de implementação, correção ou validação de UI:
+
+1. **Detectar a stack** — `AGENTS.md`, `README.md`, `package.json`, `plan.md`.
+2. **Verificar se o servidor já está no ar** — checar terminais e portas documentadas.
+3. **Subir o que faltar sem pedir permissão** — dev server ou preview após build.
+4. **Validar** — homepage carrega, artigo de exemplo renderiza, build passa se relevante.
+5. **Antes de enviar qualquer URL ao usuário** — testar a rota exata (HTTP 200 ou conteúdo esperado). Se falhar: subir servidor, corrigir rota/slug ou publicar draft; só então informar o link.
+6. **Informar ao usuário** — URLs efetivas já validadas.
+
+## Tech Blog (Astro)
+
+```bash
+npm run dev
+```
+
+- URL padrão: http://localhost:4321
+- Após build: `npm run preview` na porta indicada pelo CLI
+- Validar: homepage + pelo menos um artigo MDX
+
+Não encerrar a resposta sem as URLs de teste quando a task alterou código executável.
