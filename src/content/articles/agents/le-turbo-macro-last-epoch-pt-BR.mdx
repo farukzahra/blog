@@ -1,0 +1,78 @@
+---
+title: Como eu usei o REA (reverse-engineer-anything) pra fazer um software que me ajuda a jogar
+description: >-
+  Descobri que o macro que eu admirava era um timer chamando uma função do
+  Windows. Usei o REA pra abrir o executável e fiz o meu pro Last Epoch em um dia.
+publishDate: 2026-10-21
+updatedDate: 2026-10-21
+author: Faruk
+tags:
+  - Reverse Engineering
+  - Rust
+  - Automation
+  - AI Agents
+  - Games
+  - Developer Tools
+draft: false
+featured: false
+lang: pt-BR
+translationId: agents/le-turbo-macro-last-epoch
+---
+
+Em Last Epoch, minha build usa cinco skills. Quatro estão em 1, 2, 3, 4 e a quinta no botão direito. Cada uma volta em um ou dois segundos, então o ciclo não para.
+
+Dez minutos de jogo dão mais de mil apertos. Uma hora passa de sete mil. Junte o botão esquerdo pressionado o tempo todo pro personagem andar.
+
+É pra isso que serve um macro: repetir as teclas no intervalo que eu escolho, segurar o botão do movimento e recastar o buff antes de ele cair. Eu não quero apertar 1, 2, 3, 4 na mão por uma hora, nem ficar de olho no timer da magia. O truque do Num Lock segura uma tecla. Eu preciso de cinco.
+
+Jogo Diablo desde o primeiro. No fim da noite o braço estava cansado, e eu preciso dele pra trabalhar. Chegar no dia seguinte com o braço moído de clicar não fechava a conta.
+
+Jogar eu não ia parar. Clicar, sim.
+
+## O software da Logitech
+
+O programa que vinha com o mouse, o da Logitech, gravava uma sequência e repetia num botão lateral. Montei uma que apertava o botão esquerdo a cada dois segundos. O personagem andava sozinho e eu ficava olhando.
+
+Funcionava até o jogo abrir uma janela no lugar errado. Aí o macro clicava no inventário, no chat, no que estivesse na frente. O programa fazia o que prometia. O trabalho era meu: programar a sequência na mão pra cada jogo, e reprogramar toda vez que a tela mudava.
+
+Eu queria uma coisa específica, que já soubesse o que fazer naquele jogo.
+
+## A janelinha preta
+
+Pro Diablo III alguém já tinha feito um spammer. Pro Diablo IV, o D4Turbo: uma janela escura com uma tabela de tecla, ação e milissegundos. F2 liga, F3 desliga, F9 fecha. Você escolhe a tecla e o intervalo. Não precisa gravar clique nenhum.
+
+Baixei, instalei e usei na mesma noite. Na segunda noite comecei a olhar a janela com desconfiança. Como aquilo conversava com o jogo?
+
+## O que tinha dentro
+
+Instalei o REA (`reverse-engineer-anything`), uma skill que lê um executável e responde perguntas: quais bibliotecas ele carrega, quais funções do Windows chama, quais textos ficaram no binário.
+
+Rodei no D4Turbo. Em uma sessão, o programa deixou de ser uma caixa preta.
+
+A única coisa que ele usa pra falar com o jogo é `SendInput`, uma função do Windows que qualquer programa pode chamar pra fingir que alguém apertou uma tecla. O D4Turbo chama essa função num timer. O resto do programa é interface.
+
+Sem driver, sem injeção de código. Ele não lê a memória do jogo e não olha pra tela. Aperta no relógio e torce pra o buff ter caído na hora certa.
+
+Eu passei anos tratando aquilo como mágica. Era uma função que a Microsoft documenta desde sempre.
+
+## O pedido
+
+O Last Epoch não tinha um D4Turbo, e eu não ia esperar alguém fazer.
+
+![A barra de skills do Last Epoch com os atalhos 1, 2, 3 e 4](/images/le-turbo-skillbar.png)
+
+Pedi pro agente: pega o que você aprendeu sobre o D4Turbo e faz a mesma coisa pro Last Epoch, em Rust.
+
+Eu queria Rust porque o D4Turbo é Rust e porque eu queria aprender. Nunca tinha escrito uma linha. Era preguiça, e a lista de coisas pra aprender era maior que a vontade de começar. Sozinho, eu ia parar no primeiro erro de compilação.
+
+## 13,6%
+
+Antes de escrever o app, o agente escreveu um script descartável em Python. O script apertou `1` dentro do jogo e comparou os pixels da barra de skill antes e depois. A barra mudou 13,6%. Sem input nenhum, mudou 0,00%.
+
+Com isso dava pra continuar.
+
+O app saiu no mesmo dia. A versão 0.1.0 foi pro GitHub com instalador e um executável portátil. Instalei, abri o jogo e apertei F2.
+
+Funcionou. Passei o resto da noite jogando com um programa que não existia de manhã.
+
+![A janela do LE Turbo num build antigo: tabela de teclas, ações e milissegundos, atalhos e status](/images/le-turbo-ui.png)

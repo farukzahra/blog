@@ -1,0 +1,78 @@
+---
+title: How I Used REA (reverse-engineer-anything) to Make Software That Helps Me Play a Game
+description: >-
+  The macro I admired turned out to be a timer calling a Windows function. I
+  used REA to open the executable and built my own for Last Epoch in a day.
+publishDate: 2026-10-21
+updatedDate: 2026-10-21
+author: Faruk
+tags:
+  - Reverse Engineering
+  - Rust
+  - Automation
+  - AI Agents
+  - Games
+  - Developer Tools
+draft: false
+featured: false
+lang: en
+translationId: agents/le-turbo-macro-last-epoch
+---
+
+In Last Epoch my build uses five skills. Four sit on 1, 2, 3, 4 and the fifth on the right button. Each one comes back in a second or two, so the cycle never stops.
+
+Ten minutes of play is more than a thousand presses. An hour passes seven thousand. Add the left button held down the whole time so the character runs.
+
+That is what a macro is for: repeat the keys on the interval I choose, hold the movement button, and recast the buff before it drops. I do not want to press 1, 2, 3, 4 by hand for an hour or watch the spell timer. The Num Lock trick holds one key. I need five.
+
+I have played Diablo since the first one. By the end of the night my arm was tired, and I need it for work. Starting the next day with it worn out from clicking did not add up.
+
+I was not going to stop playing. I was going to stop clicking.
+
+## The Logitech software
+
+The program that came with the mouse, Logitech's, recorded a sequence and replayed it from a side button. I made one that pressed the left button every two seconds. The character walked on its own and I watched.
+
+It worked until the game opened a window in the wrong place. Then the macro clicked the inventory, the chat, whatever was in front. The program did what it promised. The work was mine: program the sequence by hand for each game, then reprogram it every time the screen moved.
+
+I wanted something specific, something that already knew what to do in that game.
+
+## The little black window
+
+For Diablo III someone had already made a spammer. For Diablo IV there was D4Turbo: a dark window with a table of key, action and milliseconds. F2 starts, F3 stops, F9 quits. You pick the key and the interval. No clicks to record.
+
+I downloaded it, installed it and used it that night. On the second night I started looking at the window with suspicion. How did it talk to the game?
+
+## What was inside
+
+I installed REA (`reverse-engineer-anything`), a skill that reads an executable and answers questions: which libraries it loads, which Windows functions it calls, which strings were left in the binary.
+
+I ran it on D4Turbo. In one session, the program stopped being a black box.
+
+The only thing it uses to talk to the game is `SendInput`, a Windows function any program can call to pretend someone pressed a key. D4Turbo calls that function on a timer. The rest of the program is interface.
+
+No driver, no code injection. It does not read the game's memory and does not look at the screen. It presses on the clock and hopes the buff dropped on time.
+
+I had treated that as magic for years. It was a function Microsoft has documented forever.
+
+## The ask
+
+Last Epoch had no D4Turbo, and I was not going to wait for someone to make one.
+
+![The Last Epoch skill bar with slots bound to 1, 2, 3 and 4](/images/le-turbo-skillbar.png)
+
+I asked the agent: take what you learned about D4Turbo and do the same for Last Epoch, in Rust.
+
+I wanted Rust because D4Turbo is Rust and because I wanted to learn. I had never written a line. It was laziness, and the list of things to learn was longer than the will to start. On my own, I would have quit at the first compiler error.
+
+## 13.6%
+
+Before writing the app, the agent wrote a throwaway Python script. The script pressed `1` inside the game and compared the skill bar pixels before and after. The bar changed 13.6%. With no input, it changed 0.00%.
+
+That was enough to continue.
+
+The app shipped the same day. Version 0.1.0 went to GitHub with an installer and a portable executable. I installed it, opened the game and pressed F2.
+
+It worked. I spent the rest of the night playing with a program that did not exist that morning.
+
+![The LE Turbo window in an early build: a table of keys, actions and milliseconds, plus hotkeys and status](/images/le-turbo-ui.png)
