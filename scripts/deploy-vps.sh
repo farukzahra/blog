@@ -29,6 +29,9 @@ ensure_docker() {
 
 deploy_stack() {
   docker compose -f "$COMPOSE_FILE" build --pull
+  # Remove the previous container first: compose renames it during recreate and
+  # a leftover name can block the next deploy with a name conflict.
+  docker rm -f blog >/dev/null 2>&1 || true
   docker compose -f "$COMPOSE_FILE" up -d --remove-orphans
 }
 
