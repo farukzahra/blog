@@ -61,10 +61,10 @@ jobs:
             "$USER@$VPS_HOST" \
             "set -eu
             mkdir -p '$APP_DIR'
-            if [ ! -d '$APP_DIR/.git' ]; then
-              git clone '$FETCH_URL' '$APP_DIR'
-            fi
             cd '$APP_DIR'
+            if [ ! -d .git ]; then
+              git init -q
+            fi
             git fetch '$FETCH_URL' '+refs/heads/*:refs/remotes/origin/*' --prune
             git reset --hard '$DEPLOY_REF'
             chmod +x scripts/deploy-vps.sh
